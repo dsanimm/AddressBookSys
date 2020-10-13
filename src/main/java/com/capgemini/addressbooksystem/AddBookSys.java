@@ -24,7 +24,7 @@ public class AddBookSys {
 		long phoneNo;
 		while (choice != 4) {
 			System.out.println(
-					"Enter your choice:\n1. Create new Address Book\n2. Select AddressBook\n3. Search Person\n4. Exit");
+					"Enter your choice:\n1. Create new Address Book\n2. Select AddressBook\n3. Search Person\n4. View person by city\n5.Exit");
 			choice = sc.nextInt();
 			switch (choice) {
 			case 1:
@@ -49,7 +49,7 @@ public class AddBookSys {
 				System.out.println("Enter City");
 				city = sc.next();
 				String tempb = name;
-				String tempa=city;
+				String tempa = city;
 				List<Path> lis = null;
 				try {
 					lis = Files.list(Paths.get("C:\\Users\\Deepanshu Singh\\eclipse-workspace\\JavaPractice"))
@@ -61,18 +61,46 @@ public class AddBookSys {
 				Stream<String> s = null;
 				for (Path pat : lis) {
 					try {
-						s = Files.lines(Paths.get(pat.toUri())).map(l -> l.split(",")[0].equals(tempb) && l.split(",")[2].equals(tempa) ? l : "");
+						s = Files.lines(Paths.get(pat.toUri()))
+								.map(l -> l.split(",")[0].equals(tempb) && l.split(",")[2].equals(tempa) ? l : "");
 						s.forEach(System.out::print);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				
+
 				choice = 4;
 
 				break;
 			case 4:
+				System.out.println("Enter City");
+				city = sc.next();
+				tempa = city;
+				lis = null;
+				try {
+					lis = Files.list(Paths.get("C:\\Users\\Deepanshu Singh\\eclipse-workspace\\JavaPractice"))
+							.filter(path -> path.toString().endsWith(".txt")).collect(Collectors.toList());
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				s = null;
+				for (Path pat : lis) {
+					try {
+						s = Files.lines(Paths.get(pat.toUri()))
+								.map(l-> l.split(",")[2].equals(tempa) ? l : "");
+						s.forEach(System.out::print);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				choice = 4;
+
+				break;
+			case 5:
 				choice = 4;
 				break;
 			default:
