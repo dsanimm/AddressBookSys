@@ -21,6 +21,12 @@ public class AddressContact {
 		return firstName;
 	}
 
+	@Override
+	public String toString() {
+		return "AddressContact [firstName=" + firstName + ", lastName=" + lastName + ", city=" + city + ", zip=" + zip
+				+ ", phoneNo=" + phoneNo + ", email=" + email + "]";
+	}
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
