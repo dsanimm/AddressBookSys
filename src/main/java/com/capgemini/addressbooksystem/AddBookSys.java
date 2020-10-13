@@ -1,10 +1,14 @@
 package com.capgemini.addressbooksystem;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AddBookSys {
@@ -18,8 +22,9 @@ public class AddBookSys {
 		String firstName, lastName, city, email, name;
 		int zip, choice = 1;
 		long phoneNo;
-		while (choice != 3) {
-			System.out.println("Enter your choice:\n1. Create new Address Book\n2. Select AddressBook\n3. Exit");
+		while (choice != 4) {
+			System.out.println(
+					"Enter your choice:\n1. Create new Address Book\n2. Select AddressBook\n3. Search Person\n4. Exit");
 			choice = sc.nextInt();
 			switch (choice) {
 			case 1:
@@ -39,7 +44,37 @@ public class AddBookSys {
 				ADDRESS_BOOK_FILE_NAME = name;
 				break;
 			case 3:
+				System.out.println("Enter Name");
+				name = sc.next();
+				System.out.println("Enter City");
+				city = sc.next();
+				String tempb = name;
+				String tempa=city;
+				List<Path> lis = null;
+				try {
+					lis = Files.list(Paths.get("C:\\Users\\Deepanshu Singh\\eclipse-workspace\\JavaPractice"))
+							.filter(path -> path.toString().endsWith(".txt")).collect(Collectors.toList());
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				Stream<String> s = null;
+				for (Path pat : lis) {
+					try {
+						s = Files.lines(Paths.get(pat.toUri())).map(l -> l.split(",")[0].equals(tempb) && l.split(",")[2].equals(tempa) ? l : "");
+						s.forEach(System.out::print);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
 				choice = 4;
+
+				break;
+			case 4:
+				choice = 4;
+				break;
 			default:
 				System.out.println("Wrong choice");
 			}
@@ -53,8 +88,14 @@ public class AddBookSys {
 					System.out.println("Enter First Name:");
 					firstName = sc.next();
 					final String temp = firstName;
-					Stream<String> s = Files.lines(Paths.get(ADDRESS_BOOK_FILE_NAME)).map(l -> l.split(","))
-							.map(l -> l[0].equals(temp) ? "record found" : "");
+					Stream<String> s = null;
+					try {
+						s = Files.lines(Paths.get(ADDRESS_BOOK_FILE_NAME)).map(l -> l.split(","))
+								.map(l -> l[0].equals(temp) ? "record found" : "");
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
 					boolean j = s.anyMatch(l -> l.equals("record found"));
 					// boolean j = true;
 					if (j == false) {
@@ -82,12 +123,12 @@ public class AddBookSys {
 				case 2:
 					System.out.println("Enter First Name:");
 					firstName = sc.next();
-					final String temp = firstName;
+					final String temp1 = firstName;
 					try {
-						Stream<String> s = Files.lines(Paths.get(ADDRESS_BOOK_FILE_NAME)).map(l -> l.split(","))
-								.map(l -> l[0].equals(temp) ? "record found" : "");
+						s = Files.lines(Paths.get(ADDRESS_BOOK_FILE_NAME)).map(l -> l.split(","))
+								.map(l -> l[0].equals(temp1) ? "record found" : "");
 						// s.forEach(System.out::println);
-						boolean j = s.anyMatch(l -> l.equals("record found"));
+						j = s.anyMatch(l -> l.equals("record found"));
 						// boolean j = true;
 						if (j == true) {
 							System.out.println("Enter Last Name:");
@@ -102,7 +143,7 @@ public class AddBookSys {
 							email = sc.next();
 							AddressContact add1 = new AddressContact(firstName, lastName, city, zip, phoneNo, email);
 							Stream<String> s1 = Files.lines(Paths.get(ADDRESS_BOOK_FILE_NAME))
-									.map(l -> l.split(",")[0].equals(temp) ? add1.toString() : l);
+									.map(l -> l.split(",")[0].equals(temp1) ? add1.toString() : l);
 							// Files.write(Paths.get(ADDRESS_BOOK_FILE_NAME), "".getBytes());
 							Files.delete(Paths.get(ADDRESS_BOOK_FILE_NAME));
 							try {
@@ -131,16 +172,16 @@ public class AddBookSys {
 				case 3:
 					System.out.println("Enter First Name:");
 					firstName = sc.next();
-					final String temp1 = firstName;
+					final String temp11 = firstName;
 					try {
-						Stream<String> s = Files.lines(Paths.get(ADDRESS_BOOK_FILE_NAME)).map(l -> l.split(","))
-								.map(l -> l[0].equals(temp1) ? "record found" : "");
+						s = Files.lines(Paths.get(ADDRESS_BOOK_FILE_NAME)).map(l -> l.split(","))
+								.map(l -> l[0].equals(temp11) ? "record found" : "");
 						// s.forEach(System.out::println);
-						boolean j = s.anyMatch(l -> l.equals("record found"));
+						j = s.anyMatch(l -> l.equals("record found"));
 						// boolean j = true;
 						if (j == true) {
 							Stream<String> s1 = Files.lines(Paths.get(ADDRESS_BOOK_FILE_NAME))
-									.map(l -> l.split(",")[0].equals(temp1) ? "" : l);
+									.map(l -> l.split(",")[0].equals(temp11) ? "" : l);
 							// Files.write(Paths.get(ADDRESS_BOOK_FILE_NAME), "".getBytes());
 							Files.delete(Paths.get(ADDRESS_BOOK_FILE_NAME));
 							try {
