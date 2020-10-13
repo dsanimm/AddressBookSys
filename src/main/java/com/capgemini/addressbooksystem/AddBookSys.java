@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class AddBookSys {
-	 public static String ADDRESS_BOOK_FILE_NAME;
+	public static String ADDRESS_BOOK_FILE_NAME;
 
 	public static void main(String[] args) {
 
@@ -19,8 +19,7 @@ public class AddBookSys {
 		int zip, choice = 1;
 		long phoneNo;
 		while (choice != 3) {
-			System.out.println(
-					"Enter your choice:\n1. Create new Address Book\n2. Select AddressBook\n3. Exit");
+			System.out.println("Enter your choice:\n1. Create new Address Book\n2. Select AddressBook\n3. Exit");
 			choice = sc.nextInt();
 			switch (choice) {
 			case 1:
@@ -53,24 +52,32 @@ public class AddBookSys {
 				case 1:
 					System.out.println("Enter First Name:");
 					firstName = sc.next();
-					System.out.println("Enter Last Name:");
-					lastName = sc.next();
-					System.out.println("Enter city:");
-					city = sc.next();
-					System.out.println("Enter zip:");
-					zip = sc.nextInt();
-					System.out.println("Enter phone No.:");
-					phoneNo = sc.nextLong();
-					System.out.println("Enter email address:");
-					email = sc.next();
-					AddressContact add = new AddressContact(firstName, lastName, city, zip, phoneNo, email);
-					try {
-						Files.write(Paths.get(ADDRESS_BOOK_FILE_NAME), add.toString().getBytes(),
-								StandardOpenOption.APPEND);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					final String temp = firstName;
+					Stream<String> s = Files.lines(Paths.get(ADDRESS_BOOK_FILE_NAME)).map(l -> l.split(","))
+							.map(l -> l[0].equals(temp) ? "record found" : "");
+					boolean j = s.anyMatch(l -> l.equals("record found"));
+					// boolean j = true;
+					if (j == false) {
+						System.out.println("Enter Last Name:");
+						lastName = sc.next();
+						System.out.println("Enter city:");
+						city = sc.next();
+						System.out.println("Enter zip:");
+						zip = sc.nextInt();
+						System.out.println("Enter phone No.:");
+						phoneNo = sc.nextLong();
+						System.out.println("Enter email address:");
+						email = sc.next();
+						AddressContact add = new AddressContact(firstName, lastName, city, zip, phoneNo, email);
+						try {
+							Files.write(Paths.get(ADDRESS_BOOK_FILE_NAME), add.toString().getBytes(),
+									StandardOpenOption.APPEND);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} else
+						System.out.println("Record already present");
 					break;
 				case 2:
 					System.out.println("Enter First Name:");
