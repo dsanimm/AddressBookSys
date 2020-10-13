@@ -23,8 +23,8 @@ public class AddressContact {
 
 	@Override
 	public String toString() {
-		return "AddressContact [firstName=" + firstName + ", lastName=" + lastName + ", city=" + city + ", zip=" + zip
-				+ ", phoneNo=" + phoneNo + ", email=" + email + "]";
+		return firstName + "," + lastName + "," + city + "," + zip
+				+ "," + phoneNo + "," + email + "\n";
 	}
 
 	public void setFirstName(String firstName) {
