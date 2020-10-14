@@ -1,6 +1,7 @@
 package com.capgemini.addressbooksystem;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -10,10 +11,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
@@ -25,6 +29,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 public class AddBookSys {
 	public static String ADDRESS_BOOK_FILE_NAME;
 	public static final String SAMPLE_CSV_FILE_PATH = "users.csv";
+	private static final String SAMPLE_JSON_FILE_PATH = "users.json";
 
 	public static void main(String[] args) {
 
@@ -191,6 +196,19 @@ public class AddBookSys {
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
+						
+						try {
+							Gson gson =new Gson();
+							String json =gson.toJson(add);
+							FileWriter writer = new FileWriter(SAMPLE_JSON_FILE_PATH);
+							writer.write(json);
+							writer.close();
+						} catch (IOException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						}
+						
+						
 						String[] nextRecord;
 						
 						Reader reader = null;
@@ -217,6 +235,11 @@ public class AddBookSys {
 								email = nextRecord[1];
 								AddressContact add1 = new AddressContact(firstName, lastName, city, zip, phoneNo, email);
 								System.out.println(add1);
+								BufferedReader br = new BufferedReader(new FileReader(SAMPLE_JSON_FILE_PATH));
+								Gson gson =new Gson();
+								AddressContact addListJson = gson.fromJson(br, AddressContact.class);
+								List<AddressContact> addList=Arrays.asList(addListJson);
+								addList.forEach(System.out::println);
 							}
 						} catch (NumberFormatException e) {
 							// TODO Auto-generated catch block
@@ -225,6 +248,9 @@ public class AddBookSys {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						
+						
+						
 					} else
 						System.out.println("Record already present");
 
