@@ -1,6 +1,10 @@
 package com.capgemini.addressbooksystem;
 
+import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,9 +14,17 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 public class AddBookSys {
 	public static String ADDRESS_BOOK_FILE_NAME;
+	public static final String SAMPLE_CSV_FILE_PATH = "users.csv";
 
 	public static void main(String[] args) {
 
@@ -40,7 +52,8 @@ public class AddBookSys {
 				break;
 			case 2:
 				System.out.println("Enter Name of AddressBook:");
-				name = sc.next();
+				name = sc.next().concat(".txt");
+				;
 				ADDRESS_BOOK_FILE_NAME = name;
 				break;
 			case 3:
@@ -88,8 +101,7 @@ public class AddBookSys {
 				s = null;
 				for (Path pat : lis) {
 					try {
-						s = Files.lines(Paths.get(pat.toUri()))
-								.map(l-> l.split(",")[2].equals(tempa) ? l : "");
+						s = Files.lines(Paths.get(pat.toUri())).map(l -> l.split(",")[2].equals(tempa) ? l : "");
 						s.forEach(System.out::print);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -100,7 +112,7 @@ public class AddBookSys {
 				choice = 4;
 
 				break;
-			case 5: 
+			case 5:
 				System.out.println("Enter City");
 				city = sc.next();
 				tempa = city;
@@ -112,11 +124,11 @@ public class AddBookSys {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
-				long d = 0 ;
+				long d = 0;
 				for (Path pat : lis) {
 					try {
-						d = Files.lines(Paths.get(pat.toUri()))
-								.map(l-> l.split(",")[2].equals(tempa) ? l : "").count();
+						d = Files.lines(Paths.get(pat.toUri())).map(l -> l.split(",")[2].equals(tempa) ? l : "")
+								.count();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -148,7 +160,7 @@ public class AddBookSys {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
 					}
-					boolean j = s.anyMatch(l -> l.equals("record found"));
+					boolean j = s == null ? true : s.anyMatch(l -> l.equals("record found"));
 					// boolean j = true;
 					if (j == false) {
 						System.out.println("Enter Last Name:");
@@ -169,8 +181,53 @@ public class AddBookSys {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+			
+						try (Writer writer1 = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_FILE_PATH));) {
+							StatefulBeanToCsv<AddressContact> beanToCsv = new StatefulBeanToCsvBuilder(writer1)
+									.withQuotechar(CSVWriter.NO_QUOTE_CHARACTER).build();
+
+							
+							beanToCsv.write(add);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						String[] nextRecord;
+						
+						Reader reader = null;
+						try {
+							reader = Files.newBufferedReader(Paths.get(SAMPLE_CSV_FILE_PATH));
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						CSVReader csvReader = new CSVReader(reader);
+						try {
+							nextRecord = csvReader.readNext();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						try {
+							while ((nextRecord = csvReader.readNext()) != null) {
+								firstName = nextRecord[2];
+								lastName = nextRecord[3];
+								city = nextRecord[0];
+								zip = Integer.parseInt(nextRecord[5]);
+								phoneNo = Integer.parseInt(nextRecord[4]);
+								email = nextRecord[1];
+								AddressContact add1 = new AddressContact(firstName, lastName, city, zip, phoneNo, email);
+								System.out.println(add1);
+							}
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					} else
 						System.out.println("Record already present");
+
 					break;
 				case 2:
 					System.out.println("Enter First Name:");
